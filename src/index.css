@@ -92,7 +92,3 @@ ul {
   display: flex;
   flex-direction: column;
 }
-
-.log-item:hover {
-  cursor: pointer;
-}

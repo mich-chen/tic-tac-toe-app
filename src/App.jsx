@@ -85,8 +85,19 @@ const Game = () => {
 
   const log = history.map((squares, index) => {
     let description;
-    if (index > 0) {
-      description = `Go to move # ${index}`;
+    if (index === currentMove) {
+      if (index === 0) {
+        description = `You are at start of game`;
+      } else {
+        description = `You are at move #${index}`;
+      }
+      return (
+        <li key={index}>
+          <div>{description}</div>
+        </li>
+      );
+    } else if (index > 0) {
+      description = `Go to move #${index}`;
     } else {
       description = `Go to start of game`;
     }
