@@ -40,9 +40,14 @@ const Board = () => {
     status = `Next player: ${nextValue}`;
   }
 
+  const handleRestart = () => {
+    setSquares(Array(9).fill(null));
+  }
+
   return (
     <div>
       <div>{status}</div>
+
       <div className='board-row'>
         <Square value={squares[0]} onSquareClick={() => handleSquareClick(0)}/>
         <Square value={squares[1]} onSquareClick={() => handleSquareClick(1)}/>
@@ -60,8 +65,9 @@ const Board = () => {
         <Square value={squares[7]} onSquareClick={() => handleSquareClick(7)}/>
         <Square value={squares[8]} onSquareClick={() => handleSquareClick(8)}/>
       </div>
+
+      <button onClick={handleRestart}>Reset Game</button>
     </div>
-    
   )
 }
 
