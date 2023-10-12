@@ -2,9 +2,6 @@ import { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-// some state or context for which player's turn
-// or toggle between X and O
-
 const Square = ({ value, onSquareClick }) => {
   return (
     <button
@@ -16,10 +13,7 @@ const Square = ({ value, onSquareClick }) => {
   );
 }
 
-const Board = () => {
-  const [squares, setSquares] = useState(Array(9).fill(null));
-  const [nextValue, setNextValue] = useState('X');
-
+const Board = ({ nextValue, squares, onPlay }) => {
   const handleSquareClick = (i) => {
     // check first if square has value, so cannot overwrite
     // and check if we have winnter yet
@@ -28,8 +22,7 @@ const Board = () => {
     }
     const nextSquares = squares.slice(); // copy current squares state
     nextSquares[i] = nextValue;
-    setSquares(nextSquares);
-    setNextValue(nextValue === 'X' ? 'O' : 'X')
+    onPlay(nextSquares);
   }
 
   const winner = calculateWinner(squares);
@@ -38,10 +31,6 @@ const Board = () => {
     status = `Winner: ${winner}`;
   } else {
     status = `Next player: ${nextValue}`;
-  }
-
-  const handleRestart = () => {
-    setSquares(Array(9).fill(null));
   }
 
   return (
@@ -65,15 +54,64 @@ const Board = () => {
         <Square value={squares[7]} onSquareClick={() => handleSquareClick(7)}/>
         <Square value={squares[8]} onSquareClick={() => handleSquareClick(8)}/>
       </div>
-
-      <button onClick={handleRestart}>Reset Game</button>
     </div>
   )
 }
 
-// 0 1 2 
-// 3 4 5 
-// 6 7 8
+const Game = () => {
+  const [history, setHistory] = useState([Array(9).fill(null)]); // nested array of board's values
+  const [currentMove, setCurrentMove] = useState(0); // index of current move in history
+
+  // 'X' is even move, 'O' is odd moves
+  const nextValue = currentMove % 2 === 0 ? 'X' : 'O'; // can dynamically calculate w/ useState()
+  const currentBoard = history[currentMove];
+
+  const handlePlay = (nextSquares) => {
+    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares]; // keep history up to currentMove point (inclusive of current move);
+    setHistory(nextHistory);
+    // move currentMove
+    setCurrentMove(nextHistory.length - 1);
+    
+  }
+
+  const handleLogJump = (i) => {
+    setCurrentMove(i);
+  }
+
+  const handleRestart = () => {
+    setHistory([Array(9).fill(null)]);
+    setCurrentMove(0);
+  }
+
+  const log = history.map((squares, index) => {
+    let description;
+    if (index > 0) {
+      description = `Go to move # ${index}`;
+    } else {
+      description = `Go to start of game`;
+    }
+    return (
+      <li key={index}>
+        <button onClick={() => handleLogJump(index)}>{description}</button>
+      </li>
+    )
+  });
+  
+  return (
+    <div className='game'>
+      <div className='game-board'>
+        <Board nextValue={nextValue} squares={currentBoard} onPlay={handlePlay}/>
+        <button onClick={handleRestart}>Reset Game</button>
+      </div>
+      <div className='game-info'>
+        <ol>
+          {log}
+        </ol>
+      </div>
+    </div>
+  )
+}
+
 function calculateWinner(squares) {
   // define possible wins
   const wins = [
@@ -98,7 +136,7 @@ function calculateWinner(squares) {
 const App = () => {
   return (
     <div>
-      <Board />
+      <Game />
     </div>
   )
 }
