@@ -33,16 +33,39 @@ const Board = ({ nextValue, squares, onPlay }) => {
     status = `Next player: ${nextValue}`;
   }
 
+  // using 2 for-loops to render square board
+  const cols = [];
+  const rows = [];
+  for (let i = 0; i < 9; i += 3) {
+    for (let j = 0; j < 3; j++) {
+      rows.push(
+        <Square key={'square' + j + i} value={squares[i+j]} onSquareClick={() => handleSquareClick(i+j)} />
+      );
+    }
+    cols.push(
+      <div className='board-row'>
+        {rows.slice(-3)}
+      </div>
+    );
+  };
+
   return (
     <div>
       <div className='status'>{status}</div>
-      <div>
+      {cols[0]}
+      {cols[1]}
+      {cols[2]}
+
+
+      {/* <div>
         {squares.map((square, index) => {
           return (<div>
             <Square value={square} onSquareClick={() => handleSquareClick(index)} />
           </div>)
         })}
-      </div>
+      </div> */}
+
+
 
       {/* <div className='board-row'>
         <Square value={squares[0]} onSquareClick={() => handleSquareClick(0)}/>

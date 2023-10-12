@@ -89,10 +89,6 @@ ul {
   margin-left: 50px;
 }
 
-.game-board {
-  min-width: calc(34px*4);
-}
-
 .restart {
   display: flex;
   flex-direction: column;
