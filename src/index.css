@@ -87,3 +87,12 @@ ul {
 .game-info {
   margin-left: 20px;
 }
+
+.restart {
+  display: flex;
+  flex-direction: column;
+}
+
+.log-item:hover {
+  cursor: pointer;
+}
