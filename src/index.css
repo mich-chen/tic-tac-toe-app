@@ -79,16 +79,22 @@ ul {
 .status {
   margin-bottom: 10px;
 }
+
 .game {
   display: flex;
   flex-direction: row;
 }
 
 .game-info {
-  margin-left: 20px;
+  margin-left: 50px;
+}
+
+.game-board {
+  min-width: calc(34px*4);
 }
 
 .restart {
   display: flex;
   flex-direction: column;
+  margin-top: 10px;
 }

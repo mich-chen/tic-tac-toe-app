@@ -35,9 +35,16 @@ const Board = ({ nextValue, squares, onPlay }) => {
 
   return (
     <div>
-      <div>{status}</div>
+      <div className='status'>{status}</div>
+      <div>
+        {squares.map((square, index) => {
+          return (<div>
+            <Square value={square} onSquareClick={() => handleSquareClick(index)} />
+          </div>)
+        })}
+      </div>
 
-      <div className='board-row'>
+      {/* <div className='board-row'>
         <Square value={squares[0]} onSquareClick={() => handleSquareClick(0)}/>
         <Square value={squares[1]} onSquareClick={() => handleSquareClick(1)}/>
         <Square value={squares[2]} onSquareClick={() => handleSquareClick(2)}/>
@@ -53,7 +60,7 @@ const Board = ({ nextValue, squares, onPlay }) => {
         <Square value={squares[6]} onSquareClick={() => handleSquareClick(6)}/>
         <Square value={squares[7]} onSquareClick={() => handleSquareClick(7)}/>
         <Square value={squares[8]} onSquareClick={() => handleSquareClick(8)}/>
-      </div>
+      </div> */}
     </div>
   )
 }
