@@ -2,10 +2,10 @@ import { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-const Square = ({ value, onSquareClick }) => {
+const Square = ({ value, onSquareClick, isWinner }) => {
   return (
     <button
-      className="square"
+      className={'square' + ' ' + (isWinner ? 'square-winning' : null)}
       onClick={onSquareClick}
     >
         {value}
@@ -13,24 +13,16 @@ const Square = ({ value, onSquareClick }) => {
   );
 }
 
-const Board = ({ nextValue, squares, onPlay }) => {
+const Board = ({ nextValue, squares, onPlay, winner }) => {
   const handleSquareClick = (i) => {
     // check first if square has value, so cannot overwrite
     // and check if we have winnter yet
-    if (squares[i] || calculateWinner(squares)) {
+    if (squares[i] || winner) {
       return;
     }
     const nextSquares = squares.slice(); // copy current squares state
     nextSquares[i] = nextValue;
     onPlay(nextSquares);
-  }
-
-  const winner = calculateWinner(squares);
-  let status;
-  if (winner) {
-    status = `Winner: ${winner}`;
-  } else {
-    status = `Next player: ${nextValue}`;
   }
 
   // using 2 for-loops to render square board
@@ -39,7 +31,12 @@ const Board = ({ nextValue, squares, onPlay }) => {
   for (let i = 0; i < 9; i += 3) {
     for (let j = 0; j < 3; j++) {
       rows.push(
-        <Square key={'square' + j + i} value={squares[i+j]} onSquareClick={() => handleSquareClick(i+j)} />
+        <Square
+          key={'square' + j + i}
+          value={squares[i+j]}
+          onSquareClick={() => handleSquareClick(i+j)}
+          isWinner={winner && winner.indexes.has(i+j) ? true : false}
+        />
       );
     }
     cols.push(
@@ -51,7 +48,7 @@ const Board = ({ nextValue, squares, onPlay }) => {
 
   return (
     <div>
-      <div className='status'>{status}</div>
+      
       {cols[0]}
       {cols[1]}
       {cols[2]}
@@ -117,6 +114,10 @@ const Game = () => {
   const handleSort = () => {
     setIsAscending(!isAscending); // not updating history because game needs to remember moves
   }
+  
+  // winner is calculated each render so we don't need to store it as state, causing max re-renders error
+  const winner = calculateWinner(currentBoard);
+  let status = winner ? `Winner: ${winner.value}` : `Next player: ${nextValue}`;
 
   const log = history.map((squares, index) => {
     let description;
@@ -146,7 +147,8 @@ const Game = () => {
   return (
     <div className='game'>
       <div className='game-board'>
-        <Board nextValue={nextValue} squares={currentBoard} onPlay={handlePlay}/>
+        <div className='status'>{status}</div>
+        <Board nextValue={nextValue} squares={currentBoard} onPlay={handlePlay} winner={winner}/>
         <button onClick={handleRestart}>Reset Game</button>
       </div>
       <div className='game-info'>
@@ -155,7 +157,6 @@ const Game = () => {
           {isAscending ? log : log.reverse()}
         </ol>
       </div>
-      
     </div>
   )
 }
@@ -175,7 +176,10 @@ function calculateWinner(squares) {
   for (let i = 0; i < wins.length; i++) {
     const [a, b, c] = wins[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      return {
+        value: squares[a],
+        indexes: new Set([a,b,c]),
+      };
     }
   }
   return null;
