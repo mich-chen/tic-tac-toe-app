@@ -91,6 +91,7 @@ const Board = ({ nextValue, squares, onPlay }) => {
 const Game = () => {
   const [history, setHistory] = useState([Array(9).fill(null)]); // nested array of board's values
   const [currentMove, setCurrentMove] = useState(0); // index of current move in history
+  const [isAscending, setIsAscending] = useState(true); // sorted by move #
 
   // 'X' is even move, 'O' is odd moves
   const nextValue = currentMove % 2 === 0 ? 'X' : 'O'; // can dynamically calculate w/ useState()
@@ -111,6 +112,10 @@ const Game = () => {
   const handleRestart = () => {
     setHistory([Array(9).fill(null)]);
     setCurrentMove(0);
+  }
+
+  const handleSort = () => {
+    setIsAscending(!isAscending); // not updating history because game needs to remember moves
   }
 
   const log = history.map((squares, index) => {
@@ -145,10 +150,12 @@ const Game = () => {
         <button onClick={handleRestart}>Reset Game</button>
       </div>
       <div className='game-info'>
+        <button onClick={handleSort}>Sorted in: {isAscending ? 'Ascending Order' : 'Descending Order'}</button>
         <ol>
-          {log}
+          {isAscending ? log : log.reverse()}
         </ol>
       </div>
+      
     </div>
   )
 }
