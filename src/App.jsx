@@ -117,7 +117,10 @@ const Game = () => {
   
   // winner is calculated each render so we don't need to store it as state, causing max re-renders error
   const winner = calculateWinner(currentBoard);
-  let status = winner ? `Winner: ${winner.value}` : `Next player: ${nextValue}`;
+  let status = winner ? `Winner: ${winner.value}`
+    : (!currentBoard.includes(null)) ? 'Draw!'
+    : `Next player: ${nextValue}`;
+
 
   const log = history.map((squares, index) => {
     let description;
