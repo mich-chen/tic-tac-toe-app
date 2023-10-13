@@ -15,8 +15,7 @@ const Square = ({ value, onSquareClick, isWinner }) => {
 
 const Board = ({ nextValue, squares, onPlay, winner }) => {
   const handleSquareClick = (i) => {
-    // check first if square has value, so cannot overwrite
-    // and check if we have winnter yet
+    // check so cannot override square value
     if (squares[i] || winner) {
       return;
     }
@@ -25,7 +24,7 @@ const Board = ({ nextValue, squares, onPlay, winner }) => {
     onPlay(nextSquares);
   }
 
-  // using 2 for-loops to render square board
+  // using 2 for-loops to render board - Tutorial's extra improvement question
   const cols = [];
   const rows = [];
   for (let i = 0; i < 9; i += 3) {
@@ -48,39 +47,9 @@ const Board = ({ nextValue, squares, onPlay, winner }) => {
 
   return (
     <div>
-      
       {cols[0]}
       {cols[1]}
       {cols[2]}
-
-
-      {/* <div>
-        {squares.map((square, index) => {
-          return (<div>
-            <Square value={square} onSquareClick={() => handleSquareClick(index)} />
-          </div>)
-        })}
-      </div> */}
-
-
-
-      {/* <div className='board-row'>
-        <Square value={squares[0]} onSquareClick={() => handleSquareClick(0)}/>
-        <Square value={squares[1]} onSquareClick={() => handleSquareClick(1)}/>
-        <Square value={squares[2]} onSquareClick={() => handleSquareClick(2)}/>
-      </div>
-
-      <div className='board-row'>
-        <Square value={squares[3]} onSquareClick={() => handleSquareClick(3)}/>
-        <Square value={squares[4]} onSquareClick={() => handleSquareClick(4)}/>
-        <Square value={squares[5]} onSquareClick={() => handleSquareClick(5)}/>
-      </div>
-
-      <div className='board-row'>
-        <Square value={squares[6]} onSquareClick={() => handleSquareClick(6)}/>
-        <Square value={squares[7]} onSquareClick={() => handleSquareClick(7)}/>
-        <Square value={squares[8]} onSquareClick={() => handleSquareClick(8)}/>
-      </div> */}
     </div>
   )
 }
@@ -91,15 +60,14 @@ const Game = () => {
   const [isAscending, setIsAscending] = useState(true); // sorted by move #
 
   // 'X' is even move, 'O' is odd moves
-  const nextValue = currentMove % 2 === 0 ? 'X' : 'O'; // can dynamically calculate w/ useState()
+  const nextValue = currentMove % 2 === 0 ? 'X' : 'O';
   const currentBoard = history[currentMove];
 
   const handlePlay = (nextSquares) => {
-    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares]; // keep history up to currentMove point (inclusive of current move);
+    // keep history up to currentMove point (inclusive of current move);
+    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
     setHistory(nextHistory);
-    // move currentMove
     setCurrentMove(nextHistory.length - 1);
-    
   }
 
   const handleLogJump = (i) => {
@@ -121,30 +89,24 @@ const Game = () => {
     : (!currentBoard.includes(null)) ? 'Draw!'
     : `Next player: ${nextValue}`;
 
-
   const log = history.map((squares, index) => {
-    let description;
-    if (index === currentMove) {
-      if (index === 0) {
-        description = `You are at start of game`;
-      } else {
-        description = `You are at move #${index}`;
-      }
+    let description = index === currentMove && index === 0 ? `You are at start of game`
+      : index === currentMove ? `You are at move#${index}` 
+      : index ? `Go to move #${index}`
+      : `Go to start of game`
+    if (index === currentMove || (currentMove === index && index === 0)) {
       return (
         <li key={index}>
           <div>{description}</div>
         </li>
       );
-    } else if (index > 0) {
-      description = `Go to move #${index}`;
     } else {
-      description = `Go to start of game`;
+      return (
+        <li key={index}>
+          <button onClick={() => handleLogJump(index)}>{description}</button>
+        </li>
+      );
     }
-    return (
-      <li key={index}>
-        <button onClick={() => handleLogJump(index)}>{description}</button>
-      </li>
-    )
   });
   
   return (
@@ -155,6 +117,7 @@ const Game = () => {
         <button onClick={handleRestart}>Reset Game</button>
       </div>
       <div className='game-info'>
+        <h4>Game Log</h4>
         <button onClick={handleSort}>Sorted in: {isAscending ? 'Ascending Order' : 'Descending Order'}</button>
         <ol>
           {isAscending ? log : log.reverse()}
